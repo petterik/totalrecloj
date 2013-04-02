@@ -1,4 +1,4 @@
-(ns totalrecloj.core-test
+(ns totalrecloj.core_test
   (:use midje.sweet
         totalrecloj.core))
 
@@ -26,11 +26,6 @@
 (fact "generate-token is a java.util.UUID for uniqueness"
       (class (generate-token)) => java.util.UUID)
 
-(defprotocol TokenHandler
-  (assoc-with-token [this token user-id password] "assoc's token with user and pass")
-  (get-with-token [this token] "get's user and pass with token")
-  (dissoc-token [this token] "dissoc's token from user and password"))
-
 (facts 
   "sending token email"
   (fact "assoc's token with user and pass"
@@ -38,13 +33,22 @@
               assocer (reify TokenHandler 
                         (assoc-with-token [this token user pass]
                           (reset! mem {:token token :user user :password pass})))]
-          (email-token! {:user "user" 
+          (email-token! {:email "user@domain.com" 
                          :password "pass"
-                         :endpoint "/endpoint"
                          :token-handler assocer
-                         :email-fn (fn [_] nil)})
-          (:user @mem) => "user"
+                         :email-fn! (fn [_] nil)})
+          (:user @mem) => "user@domain.com"
           (:password @mem) => "pass"
-          (-> (:token @mem) frequencies (get \-)) => 4))
-  (future-fact "sends the right things to the email fn"))
+          (-> (:token @mem) frequencies (get \-)) => 4)) ;UUID's have 4 '-' chars
+  (fact "sends the right things to the email fn"
+        (let [mem (atom {})
+              email-fn (fn [m] (reset! mem m))]
+          (email-token! {:email "user@domain.com"
+                         :host "host.com"
+                         :endpoint "/endpoint"
+                         :token-handler (reify TokenHandler (assoc-with-token [a b c d] nil))
+                         :email-fn! email-fn})
+          (:to @mem) => "user@domain.com"
+          (:subject @mem) => "Verify email"
+          (:body @mem) => #".*host\.com/endpoint\?token=.*")))
 
