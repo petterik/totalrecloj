@@ -2,7 +2,10 @@
 
 A Clojure library designed to handle the work flow of sending an email for user verification.
 
-## The name
+Version: 0.1.0-SNAPSHOT
+Lein: `[totalrecloj "0.1.0-SNAPSHOT"]`
+
+## The Name
 
 The name is a Clojure twist on the movie title Total Recall, where the proccess of going to an email and comming back to the site for verification is supposed to be the "Recall".
 
