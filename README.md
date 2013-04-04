@@ -3,6 +3,7 @@
 A Clojure library designed to handle the work flow of sending an email for user verification.
 
 Version: 0.1.0-SNAPSHOT
+
 Lein: `[totalrecloj "0.1.0-SNAPSHOT"]`
 
 ## The Name
