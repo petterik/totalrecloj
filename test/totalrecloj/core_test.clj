@@ -15,14 +15,6 @@
         => (str "http://www.example.com/endpoint?token=" 
                 (java.net.URLEncoder/encode "with-special-chars-?/"))))
 
-(facts
-  "handle-postal-response"
-  (fact "keep message and code"
-        (handle-postal-response {:code 0
-                                 :error :SUCCESS
-                                 :message "yay"}) => {:email-request {:code 0
-                                                                      :message "yay"}}))
-
 (fact "generate-token is a java.util.UUID for uniqueness"
       (class (generate-token)) => java.util.UUID)
 

@@ -13,9 +13,6 @@
   [{:keys [token host endpoint]}]
   (str host endpoint "?token=" (java.net.URLEncoder/encode token)))
 
-(defn handle-postal-response [m]
-  {:email-request (select-keys m [:code :message])})
-
 (defn generate-token [] (java.util.UUID/randomUUID))
 
 (defn email-token! [{:keys [email password host endpoint token-handler email-fn!]}]
@@ -36,3 +33,4 @@
       (.dissoc-token token-handler token)
       {:message "Successfully verified user"})
     {:message (str "Invalid token: " token)}))
+
