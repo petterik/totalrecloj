@@ -31,7 +31,7 @@
   (fact "assoc's token with user and pass"
         (let [mem (atom {})
               assocer (reify TokenHandler 
-                        (assoc-with-token [this token user pass]
+                        (assoc-user-with-token [this token user pass]
                           (reset! mem {:token token :user user :password pass})))]
           (email-token! {:email "user@domain.com" 
                          :password "pass"
@@ -46,7 +46,8 @@
           (email-token! {:email "user@domain.com"
                          :host "host.com"
                          :endpoint "/endpoint"
-                         :token-handler (reify TokenHandler (assoc-with-token [a b c d] nil))
+                         :token-handler (reify TokenHandler 
+                                          (assoc-user-with-token [a b c d] nil))
                          :email-fn! email-fn})
           (:to @mem) => "user@domain.com"
           (:subject @mem) => "Verify email"
@@ -60,7 +61,7 @@
                     :password "pass"}
               mem (atom {:token tok})
               token-handler (reify TokenHandler
-                              (get-with-token [this token] 
+                              (get-user [this token] 
                                 (when (= tok token) user))
                               (dissoc-token [this token] 
                                 (when (= tok token) (swap! mem dissoc :token))))]
@@ -77,7 +78,7 @@
   (fact "un-assoc'ed token -> 'invalid token' message"
         (-> (verify-token! {:token "token"
                             :token-handler (reify TokenHandler 
-                                             (get-with-token [this token] nil))
+                                             (get-user [this token] nil))
                             :user-persister nil})
             :message) => #".*[Ii]nvalid token.*token.*"))
 
