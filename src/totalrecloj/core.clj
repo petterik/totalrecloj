@@ -5,6 +5,9 @@
   (get-with-token [this token] "get's user and pass with token")
   (dissoc-token [this token] "dissoc's token from user and password"))
 
+(defprotocol UserPersister
+  (persist-verified-user [this user pass] "persist user verified by email"))
+
 (defn generate-token-link 
   "create GET link that hits the endpoint at the host with the token as data"
   [{:keys [token host endpoint]}]
@@ -25,3 +28,11 @@
                              (generate-token-link {:token token
                                                    :host host
                                                    :endpoint endpoint}))}))))
+
+(defn verify-token! [{:keys [token token-handler user-persister]}]
+  (if-let [user (.get-with-token token-handler token)]
+    (do
+      (.persist-verified-user user-persister (:email user) (:password user))
+      (.dissoc-token token-handler token)
+      {:message "Successfully verified user"})
+    {:message (str "Invalid token: " token)}))
