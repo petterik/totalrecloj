@@ -1,12 +1,12 @@
 (ns totalrecloj.core)
 
 (defprotocol TokenHandler
-  (assoc-user-with-token [this token user-id password] "assoc's token with user and pass")
-  (get-user [this token] "get's user and pass with token")
-  (dissoc-token [this token] "dissoc's token from user and password"))
+  (assoc-user-with-token [this token email password] "assoc's token with email and pass")
+  (get-user [this token] "get's email and pass with token")
+  (dissoc-token [this token] "dissoc's token from email and password"))
 
 (defprotocol UserPersister
-  (persist-verified-user [this user pass] "persist user verified by email"))
+  (persist-verified-user [this email pass] "persist email and password that has been  verified by email"))
 
 (defn generate-token-link 
   "create GET link that hits the endpoint at the host with the token as data"
